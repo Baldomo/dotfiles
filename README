@@ -8,7 +8,9 @@ Welcome to my dotfiles repo :)
 - [Wal](https://github.com/dylanaraps/wal)
 - [i3-gaps](https://github.com/Airblader/i3) (duh)
 - Font: [Iosevka](https://github.com/be5invis/Iosevka)
+- [Rofi](https://davedavenport.github.io/rofi/)
 - i3-lock (pretty locking script taken from [reddit](https://reddit.com/r/unixporn))
+- dmenu (i3-dmenu-desktop)
 - Compton
 - Conky
 - Scrot
@@ -18,5 +20,19 @@ Welcome to my dotfiles repo :)
 #### Suggestions ####
 ---
 Place/link the lockscreen script in /bin so the i3 config can easily run it
+
+#### Screenshots ####
+---
+![Busy](../../../Pictures/Screenshots/2017-08-04_18-11_1366x768_scrot.png)
+
+![Busy 2](../../../Pictures/Screenshots/2017-08-04_18-12_1366x768_scrot.png)
+
+---
+
+![Floating urxvt](../../../Pictures/Screenshots/2017-08-04_18-14_1366x768_scrot.png)
+
+![Floating urxvt 2](../../../Pictures/Screenshots/2017-08-04_18-15_1366x768_scrot.png)
+
+
 
 ##### Enjoy! #####
