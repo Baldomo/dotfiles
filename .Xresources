@@ -1,0 +1,13 @@
+!Toggle scrollbar
+URxvt.scrollBar: False
+
+!!Font
+URxvt.font: xft:Iosevka:pixelsize=13
+URxvt.boldFont: xft:Iosevka:bold:pixelsize=13
+
+!!Transparency
+URxvt.transparent: true
+URxvt.shading: 23
+!! Turn off annoyong ctrl+shift ISO-14755 menu U
+URxvt.iso14755: off
+URxvt.iso14755_52: off
