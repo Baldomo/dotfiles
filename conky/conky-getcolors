@@ -1,0 +1,45 @@
+#!/bin/bash
+
+source "$HOME/.cache/wal/colors.sh"
+
+function parse_rgb () {
+    echo $1 | cut -c 2- | sed 's/../&\//g' | sed 's/.$//'
+}
+
+for i in "$@" 
+do
+    case $i in
+        -bg|--background)
+        # let conky.conf escape the hashtag, so just cut it out
+        echo $color2 | cut -c 2-
+        ;;
+        
+        --background-parsed)
+        parse_rgb $color2
+        ;;
+        
+        -fg|--foreground)
+        echo $color7 | cut -c 2-
+        ;;
+        
+        --foreground-parsed)
+        parse_rgb $color7
+        ;;
+        
+        -color1)
+        echo $color1 | cut -c 2-
+        ;;
+        
+        -color3)
+        echo "$color3"
+        ;;
+        
+        -color4)
+        echo "$color4"
+        ;;
+        
+        --darkest)
+        echo $color0 | cut -c 2-
+        ;;
+    esac
+done
