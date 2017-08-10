@@ -1,0 +1,72 @@
+#!/bin/bash
+i3_CONF_DIR=$HOME/.config/i3
+i3_CONF_DIR_BACKUP=$HOME/.config/i3-backup
+
+while [[ $# -gt 0 ]]
+do
+key="$1"
+
+case $key in
+    -f|--folder)
+    i3_CONF_DIR=$2
+    shift
+    ;;
+
+    -bf|--backup-folder)
+    i3_CONF_DIR_BACKUP=$2
+    shift
+    ;;
+
+    -b|--backup)
+    if [ -d "$i3_CONF_DIR"]; then
+        mv -r $i3_CONF_DIR i3_CONF_DIR_BACKUP
+        echo "Backup successful!"
+    else
+        echo "Your i3 config folder is not where it should be!"
+        echo "Run the script again and specify the folder location with -f or --folder"
+        exit 1
+    fi
+    shift
+    ;;
+
+    -r|--restore)
+    if [ -d "$i3_CONF_DIR_BACKUP"]; then
+        if [ -d "$i3_CONF_DIR"]; then
+            rm -rf -r $i3_CONF_DIR
+            echo "Restore successful!"
+        else
+            echo "Your i3 config backup folder is not where it should be!"
+            echo "Run the script again and specify the folder location with -f or --folder"
+            exit 1
+        fi
+
+    else
+        echo "Backup folder not found!"
+        echo "Run the script again and specify the backup folder location with -bf or --backup-folder"
+    fi
+    shift
+    ;;
+
+    -a|--apply)
+    exit 0
+    shift
+    ;;
+
+    -h|--help)
+    echo -e "Usage: i3-config-helper [-f or --folder] <config folder> [-bf or --backup-folder] <backup folder>"
+    echo -e "\t[-b or --backup] to backup your data"
+    echo -e "\t[-r or --restore] to restore all your data"
+    echo -e "\t[-a or --apply] to actually copy my dotfiles in your config folders"
+    echo -e "\nThis script can backup and restore your i3 config folder and stuff (conky and .Xresources) to easily try out my dotfiles"
+    echo -e "\nNote that --backup-folder is used only to point at the folder that this script has created in the case you renamed it"
+    exit 0
+    shift
+    ;;
+
+    *)
+    echo "Unknown option: \"$1\", use -h or --help for usage example"
+    exit 1
+    ;;
+esac
+done
+
