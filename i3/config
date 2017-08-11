@@ -242,7 +242,7 @@ bindsym XF86AudioRaiseVolume exec "amixer -c 1 set Master 2dB- -M; sleep 0.3"
 bindsym Mod4+F4 exec --no-startup-id "$terminal -e ncpamixer"
 
 # Get new random wallpaper
-bindsym $mod+Shift+w exec "wal -a 90 -i $wallpapers -o wal-set"
+bindsym $mod+Shift+w exec "wal -a 90 -i $wallpapers"
 
 # Lock the screen
 bindsym $mod+l exec lockscreen -b -s

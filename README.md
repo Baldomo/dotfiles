@@ -1,5 +1,4 @@
 # Baldomo's dotfiles #
----
 Welcome to my dotfiles repo :)
 
 

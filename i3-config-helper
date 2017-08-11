@@ -1,64 +1,142 @@
 #!/bin/bash
+# This script is part of Baldomo's dotfiles (https://github.com/Baldomo)
+CONF_DIR=$HOME/.config/
+
 i3_CONF_DIR=$HOME/.config/i3
 i3_CONF_DIR_BACKUP=$HOME/.config/i3-backup
 
+CONKY_CONF_DIR=$HOME/.config/conky
+CONKY_CONF_DIR_BACKUP=$HOME/.config/conky-backup
+
+XRESOURCES=$HOME/.Xresources
+XRESOURCES_BACKUP=$HOME/.Xresources-backup
+
+BACKUP_DONE=false
+RESTORE_DONE=false
+APPLY_DONE=false
+
 while [[ $# -gt 0 ]]
 do
-key="$1"
 
-case $key in
-    -f|--folder)
-    i3_CONF_DIR=$2
-    shift
-    ;;
-
-    -bf|--backup-folder)
-    i3_CONF_DIR_BACKUP=$2
-    shift
-    ;;
+case "$1" in
 
     -b|--backup)
-    if [ -d "$i3_CONF_DIR"]; then
-        mv -r $i3_CONF_DIR i3_CONF_DIR_BACKUP
-        echo "Backup successful!"
+    if [ -d "$i3_CONF_DIR_BACKUP" ]; then
+        echo "Removing old i3 backup..."
+        rm -rf $i3_CONF_DIR_BACKUP
+    fi
+    if [ -d "$CONKY_CONF_DIR_BACKUP" ]; then
+        echo "Removing old conky backup..."
+        rm -rf $CONKY_CONF_DIR_BACKUP
+    fi
+    if [ -f "$XRESOURCES_BACKUP" ]; then
+        echo -e "Removing old .Xresources backup...\n"
+        rm -rf $XRESOURCES_BACKUP
+    fi
+    if [ -d "$i3_CONF_DIR" ]; then
+        cp -r $i3_CONF_DIR $i3_CONF_DIR_BACKUP
+        echo "i3 backup successful!"
     else
-        echo "Your i3 config folder is not where it should be!"
-        echo "Run the script again and specify the folder location with -f or --folder"
+        echo -e "\nYour i3 config folder is not where it should be!"
+        echo "Modify the script to point at your existing i3 config folder"
+        exit 1
+    fi
+    if [ -d "$CONKY_CONF_DIR" ]; then
+        cp -r $CONKY_CONF_DIR $CONKY_CONF_DIR_BACKUP
+        echo "Conky backup successful!"
+    else
+        echo -e "\nYour conky config folder is not where it should be!"
+        echo "Modify the script to point at your existing conky config folder"
+        exit 1
+    fi
+    if [ -f "$XRESOURCES" ]; then
+        cp $XRESOURCES $XRESOURCES_BACKUP
+        echo ".Xresources backup successful!"
+    else
+        echo -e "\nYour .Xresources is not where it should be!"
+        echo "Modify the script to point at your existing .Xresources file"
+        exit 1
+    fi
+    BACKUP_DONE=true
+    shift
+    ;;
+
+    -r|--restore)
+    if [[ -d "$i3_CONF_DIR_BACKUP" ]]; then
+        if [ -d "$i3_CONF_DIR" ]; then
+            rm -rf $i3_CONF_DIR
+        fi
+        mv $i3_CONF_DIR_BACKUP $i3_CONF_DIR
+        echo "i3 restored successfully!"
+    else
+        echo -e "\ni3 backup folder not found!"
+        echo "Modify the script to point at your existing i3 backup folder"
+        exit 1
+    fi
+    RESTORE_DONE=true
+    if [[ -d "$CONKY_CONF_DIR_BACKUP" ]]; then
+        if [ -d "$CONKY_CONF_DIR" ]; then
+            rm -rf $CONKY_CONF_DIR
+        fi
+        mv $CONKY_CONF_DIR_BACKUP $CONKY_CONF_DIR
+        echo "Conky restored successfully!"
+    else
+        echo -e "\nConky backup folder not found"
+        echo "Modify the script to point at your existing conky backup folder"
+        exit 1
+    fi
+    if [[ -f "$XRESOURCES_BACKUP" ]]; then
+        if [ -f "$XRESOURCES" ]; then
+            rm -rf $XRESOURCES
+        fi
+        mv $XRESOURCES_BACKUP $XRESOURCES
+        echo ".Xresources restored successfully!"
+    else
+        echo -e "\n.Xresources backup file not found"
+        echo "Modify the script to point at your existing .Xresources backup file"
         exit 1
     fi
     shift
     ;;
 
-    -r|--restore)
-    if [ -d "$i3_CONF_DIR_BACKUP"]; then
-        if [ -d "$i3_CONF_DIR"]; then
-            rm -rf -r $i3_CONF_DIR
-            echo "Restore successful!"
-        else
-            echo "Your i3 config backup folder is not where it should be!"
-            echo "Run the script again and specify the folder location with -f or --folder"
-            exit 1
-        fi
-
-    else
-        echo "Backup folder not found!"
-        echo "Run the script again and specify the backup folder location with -bf or --backup-folder"
-    fi
-    shift
-    ;;
-
     -a|--apply)
+    if [ "$RESTORE_DONE" = true ]; then
+        echo -e "\nCannot copy files and restore at the same time!"
+        exit 1
+    fi
+    if [ "$BACKUP_DONE" = false ]; then
+        echo -e "Use --backup before --apply (safety measure)"
+        exit 1
+    fi
+    echo -e "\nCopying my dotfiles..."
+    rm -rf $i3_CONF_DIR
+    rm -rf $CONKY_CONF_DIR
+    rm $XRESOURCES
+    cp -r i3/ $CONF_DIR
+    cp -r conky/ $CONF_DIR
+    cp .Xresources $HOME
+    if [ -d "$CONKY_CONF_DIR" ] && [ -d "$i3_CONF_DIR" ] && [ -f "$XRESOURCES" ]; then
+        echo -e "\nCopied files successfully"
+        echo "Now follow the README to customise your new config :)"
+        APPLY_DONE=true
+        BACKUP_DONE=false
+    else
+        echo -e "\nError copying files! (usually a permission problem)"
+        echo -e "Try to run the script again with sudo"
+        exit 1
+    fi
     exit 0
     shift
     ;;
 
     -h|--help)
-    echo -e "Usage: i3-config-helper [-f or --folder] <config folder> [-bf or --backup-folder] <backup folder>"
-    echo -e "\t[-b or --backup] to backup your data"
-    echo -e "\t[-r or --restore] to restore all your data"
+    echo -e "This script can backup and restore your i3 config folder and stuff (conky and .Xresources) to easily try out my dotfiles"
+    echo -e "Usage: i3-config-helper"
+    echo -e "\t[-b or --backup] to backup your data (conky, i3 and .Xresources)"
+    echo -e "\t[-r or --restore] to restore all your data, this will OVERWRITE your changes to the config folders with your backup"
     echo -e "\t[-a or --apply] to actually copy my dotfiles in your config folders"
-    echo -e "\nThis script can backup and restore your i3 config folder and stuff (conky and .Xresources) to easily try out my dotfiles"
-    echo -e "\nNote that --backup-folder is used only to point at the folder that this script has created in the case you renamed it"
+    echo -e "\nExample: i3-config-helper --backup --apply"
+    echo -e "\tUse this to instantly backup your configs and apply mine"
     exit 0
     shift
     ;;
@@ -69,4 +147,3 @@ case $key in
     ;;
 esac
 done
-
