@@ -11,6 +11,8 @@ CONKY_CONF_DIR_BACKUP=$HOME/.config/conky-backup
 XRESOURCES=$HOME/.Xresources
 XRESOURCES_BACKUP=$HOME/.Xresources-backup
 
+LOCKSCREEN=/usr/bin/lockscreen
+
 BACKUP_DONE=false
 RESTORE_DONE=false
 APPLY_DONE=false
@@ -115,6 +117,7 @@ case "$1" in
     cp -r i3/ $CONF_DIR
     cp -r conky/ $CONF_DIR
     cp .Xresources $HOME
+    sudo ln lockscreen $LOCKSCREEN
     if [ -d "$CONKY_CONF_DIR" ] && [ -d "$i3_CONF_DIR" ] && [ -f "$XRESOURCES" ]; then
         echo -e "\nCopied files successfully"
         echo "Now follow the README to customise your new config :)"
